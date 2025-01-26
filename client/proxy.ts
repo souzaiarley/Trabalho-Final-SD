@@ -57,8 +57,10 @@ export class Proxy {
     packMessage(objectRef: string, method: string, args: string): string {
         // Empacota a mensagem
         const message = new Message(this.requestID, 'request', objectRef, '', method, args);
+        
         // Incrementa o ID da requisição
         this.requestID++;
+        
         // Retorna a mensagem em formato JSON
         return JSON.stringify(message);
     }

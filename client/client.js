@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UdpClient = void 0;
 var dgram = require("dgram");
 /*
 client.on('error', (err: Error) => {
@@ -18,7 +19,7 @@ var UdpClient = /** @class */ (function () {
             console.error("Erro ao criar socket: ".concat(err.message));
         }
     }
-    UdpClient.prototype.send = function (message) {
+    UdpClient.prototype.sendRequest = function (message) {
         var _this = this;
         var buffer = Buffer.from(message);
         this.socket.send(buffer, this.serverPort, this.serverIP, function (err) {
@@ -26,12 +27,9 @@ var UdpClient = /** @class */ (function () {
                 console.error('Erro ao enviar mensagem:', err.message);
                 _this.socket.close();
             }
-            else {
-                console.log('Mensagem enviada ao servidor.');
-            }
         });
     };
-    UdpClient.prototype.receive = function () {
+    UdpClient.prototype.getReply = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             _this.socket.on('message', function (msg) {
@@ -42,8 +40,17 @@ var UdpClient = /** @class */ (function () {
     };
     return UdpClient;
 }());
-var client = new UdpClient('localhost', 12000);
-client.send('Hello, server!');
-client.receive().then(function (msg) {
-    console.log("Mensagem recebida: ".concat(msg));
+exports.UdpClient = UdpClient;
+/*
+const client = new UdpClient('localhost', 12000);
+
+client.sendRequest('Hello, server!');
+
+client.getReply().then((msg) => {
+    console.log(msg);
+    return msg.toString();
+}).then((msg) => {
+    console.log(typeof msg);
 });
+
+*/ 

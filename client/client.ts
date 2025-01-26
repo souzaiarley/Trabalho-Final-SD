@@ -43,17 +43,3 @@ export class UdpClient {
         });
     }
 }
-
-/*
-const client = new UdpClient('localhost', 12000);
-
-client.sendRequest('Hello, server!');
-
-client.getReply().then((msg) => {
-    console.log(msg);
-    return msg.toString();
-}).then((msg) => {
-    console.log(typeof msg);
-});
-
-*/

@@ -1,6 +1,6 @@
 from socket import *
 
-class UdpServer:
+class UDPServer:
     def __init__(self):
         self.serverPort = 12000
         self.serverSocket = socket(AF_INET, SOCK_DGRAM)
@@ -19,7 +19,7 @@ class UdpServer:
 
 
 if __name__ == '__main__':
-    server = UdpServer()
+    server = UDPServer()
     
     while True:
         request, clientAddr = server.getRequest()

@@ -7,7 +7,7 @@ client.on('error', (err: Error) => {
 });
 */
 
-export class UdpClient {
+export class UDPClient {
     socket: dgram.Socket;
     serverIP: string;
     serverPort: number;

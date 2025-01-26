@@ -1,16 +1,16 @@
-import { Message } from './classes'
-import { UdpClient } from './client'
+import { Message } from '../classes/ts/Message'
+import { UDPClient } from './UDPClient'
 
-export class Proxy {
+export class TaskListProxy {
     // Contador de requisições
     requestID: number;
 
     // Cliente UDP
-    client: UdpClient;
+    client: UDPClient;
 
     constructor(serverIP: string, serverPort: number) {
         this.requestID = 0;
-        this.client = new UdpClient(serverIP, serverPort);
+        this.client = new UDPClient(serverIP, serverPort);
     }
 
     async getList(): Promise<Object> {

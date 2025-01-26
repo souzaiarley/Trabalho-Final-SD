@@ -11,8 +11,8 @@ class UdpServer:
         request, clientAddr = self.serverSocket.recvfrom(1024)
         return request, clientAddr
     
-    def sendResponse(self, response, clientAddr):
-        self.serverSocket.sendto(response, clientAddr)
+    def sendReply(self, reply, clientAddr):
+        self.serverSocket.sendto(reply, clientAddr)
 
     def close(self):
         self.serverSocket.close()
@@ -24,5 +24,5 @@ if __name__ == '__main__':
     while True:
         request, clientAddr = server.getRequest()
         print(f'Request from {clientAddr}: {request}')
-        response = request.upper()
-        server.sendResponse(response, clientAddr)
+        reply = request.upper()
+        server.sendReply(reply, clientAddr)

@@ -1,3 +1,5 @@
+import json
+
 class Task:
     def __init__(self, id: int, name: str, description: str, tag: str, priority: int, deadline: str, completed: bool):
         self.id: int = id
@@ -8,13 +10,5 @@ class Task:
         self.deadline: str = deadline
         self.completed: bool = completed
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'tag': self.tag,
-            'priority': self.priority,
-            'deadline': self.deadline,
-            'completed': self.completed
-        }
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)

@@ -1,3 +1,5 @@
+import json
+
 class Message:
     def __init__(self, id: int, type: str, objectRef: str, message: str, methodID: str, args: dict):
         self.id: int = id
@@ -7,12 +9,5 @@ class Message:
         self.methodID: str = methodID
         self.args: dict = args
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "type": self.type,
-            "objectRef": self.objectRef,
-            "message": self.message,
-            "methodID": self.methodID,
-            "args": self.args
-        }
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)

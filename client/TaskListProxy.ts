@@ -1,4 +1,4 @@
-import { Message } from '../classes/ts/Message'
+import { Message } from './classes/Message'
 import { UDPClient } from './UDPClient'
 
 export class TaskListProxy {

@@ -4,10 +4,10 @@ export class Task {
     description: string;
     tag: string;
     priority: number;
-    deadline: Date;
+    deadline: string;
     completed: boolean;
 
-    constructor(id: number, name: string, description: string, tag: string, priority: number, deadline: Date, completed: boolean) {
+    constructor(id: number, name: string, description: string, tag: string, priority: number, deadline: string, completed: boolean) {
         this.id = id;
         this.name = name;
         this.description = description;

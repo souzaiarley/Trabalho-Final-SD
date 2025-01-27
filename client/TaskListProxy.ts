@@ -2,6 +2,7 @@ import { UDPClient } from './UDPClient'
 
 import { Message } from './classes/Message'
 import { TaskList } from './classes/TaskList'
+import { Task } from './classes/Task'
 
 export class TaskListProxy {
     // Contador de requisições
@@ -32,6 +33,27 @@ export class TaskListProxy {
             
             // Retorna a lista de tarefas
             return new TaskList(data['tasks']);
+        }
+        catch (error) {
+            return error;
+        }
+    }
+
+    async createTask(task: Task): Promise<Object> {
+        // Empacota os argumentos
+        const args = task;
+        const jsonArgs = JSON.stringify(args);
+        const encodedArgs = Buffer.from(jsonArgs);
+
+        try {
+            // Chama doOperation com os argumentos empacotados
+            const response = await this.doOperation('TaskList', 'createTask', encodedArgs);
+
+            // Desempacota o argumento da resposta
+            const data = JSON.parse(response.toString());
+
+            // Retorna a resposta
+            return data;
         }
         catch (error) {
             return error;

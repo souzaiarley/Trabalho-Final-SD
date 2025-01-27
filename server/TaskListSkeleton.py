@@ -16,4 +16,13 @@ class TaskListSkeleton:
         jsonResponse = response.toJson()
         return jsonResponse.encode()
 
+    def createTask(self, args: bytes) -> bytes:
+        # Desempacota os argumentos de entrada
+        args = json.loads(args.decode())
 
+        # Chama o metodo do servente e obtem a resposta
+        response = self.taskListServant.createTask(args)
+
+        # Empacota a resposta e a retorna
+        jsonResponse = response.toJson()
+        return jsonResponse.encode()

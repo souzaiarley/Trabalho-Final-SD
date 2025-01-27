@@ -1,5 +1,5 @@
 import json
-from Task import Task
+from classes.Task import Task
 
 class TaskList:
     def __init__(self):

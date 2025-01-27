@@ -26,22 +26,35 @@ class ProcessRequests:
         self.server = UDPServer()
         self.dispatcher = Dispatcher()
     
-    def unpackMessage(self, request) -> Message:
+    def unpackMessage(self, request: bytes) -> Message:
         request = json.loads(request.decode())
 
-        requestMessage = Message(
+        args = bytes(request['args']['data'])
+
+        message = Message(
             request['id'],
             request['type'],
             request['objectRef'],
             request['message'],
             request['methodID'],
-            request['args']
+            args
         )
 
-        return requestMessage
+        return message
     
-    def packMessage(self, message: Message):
-        return message.toJson()
+    def packMessage(self, response: bytes, requestID: int) -> bytes:
+        message = Message(
+            requestID,
+            'reply',
+            '',
+            '',
+            '',
+            response
+        )
+
+        jsonMessage = message.toJson()
+        return jsonMessage.encode()
+
 
     def run(self):
         while True:
@@ -55,7 +68,7 @@ class ProcessRequests:
             response = self.dispatcher.selectSkeleton(message)
             
             # Empacota a resposta
-            reply = self.packMessage(response)
+            reply = self.packMessage(response, message.id)
             
             # Envia a resposta
             self.server.sendReply(reply, clientAddr)

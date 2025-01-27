@@ -11,10 +11,12 @@ class Dispatcher:
             module = importlib.import_module(f'{message.objectRef}Skeleton')
 
             objectRef = getattr(module, f'{message.objectRef}Skeleton')
-            methodName = message.methodID
-            method = getattr(objectRef, methodName)
+            objectRef = objectRef()
 
+            method = getattr(objectRef, message.methodID)
             response = method(message.args)
+
+            return response
 
         except Exception as e:
             print(e)

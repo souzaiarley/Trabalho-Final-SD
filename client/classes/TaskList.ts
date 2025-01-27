@@ -3,7 +3,7 @@ import { Task } from './Task';
 export class TaskList {
     tasks: Task[];
 
-    constructor() {
-        this.tasks = [];
+    constructor(tasks: Task[] = []) {
+        this.tasks = tasks;
     }
 }

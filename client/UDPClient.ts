@@ -23,10 +23,8 @@ export class UDPClient {
         }
     }
 
-    sendRequest(message: string) {
-        const buffer = Buffer.from(message);
-
-        this.socket.send(buffer, this.serverPort, this.serverIP, (err) => {
+    sendRequest(request: Buffer) {
+        this.socket.send(request, this.serverPort, this.serverIP, (err) => {
             if (err) {
                 console.error('Erro ao enviar mensagem:', err.message);
                 this.socket.close();

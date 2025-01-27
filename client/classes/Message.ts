@@ -4,9 +4,9 @@ export class Message {
     objectRef: string;
     message: string;
     methodID: string;
-    args: Object;
+    args: Buffer;
 
-    constructor(id: number, type: string, objectRef: string, message: string = "", methodID: string = "", args: Object = {}) {
+    constructor(id: number, type: string, objectRef: string, message: string, methodID: string, args: Buffer) {
         this.id = id;
         this.type = type;
         this.objectRef = objectRef;

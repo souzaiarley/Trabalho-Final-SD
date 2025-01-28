@@ -26,3 +26,14 @@ class TaskListSkeleton:
         # Empacota a resposta e a retorna
         jsonResponse = response.toJson()
         return jsonResponse.encode()
+
+    def deleteTask(self, args: bytes) -> bytes:
+        # Desempacota os argumentos de entrada
+        args = json.loads(args.decode())
+
+        # Chama o metodo do servente e obtem a resposta
+        response = self.taskListServant.deleteTask(args)
+
+        # Empacota a resposta e a retorna
+        jsonResponse = json.dumps(response)
+        return jsonResponse.encode()

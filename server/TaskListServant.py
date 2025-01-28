@@ -8,7 +8,6 @@ class TaskListServant():
     def getList(self, args) -> TaskList:
         return self.taskList
     
-
     def createTask(self, args) -> Task:
         task = Task(
             args['id'],
@@ -22,6 +21,13 @@ class TaskListServant():
 
         self.taskList.tasks.append(task)
         return task
+    
+    def getTask(self, args) -> Task:
+        for task in self.taskList.tasks:
+            if task.id == args['taskID']:
+                return task
+        
+        return None
     
     def deleteTask(self, args) -> dict:
         for task in self.taskList.tasks:

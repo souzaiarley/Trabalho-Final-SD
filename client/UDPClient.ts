@@ -35,8 +35,11 @@ export class UDPClient {
     getReply(): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             this.socket.on('message', (msg) => {
-                this.socket.close();
                 resolve(msg);
+            });
+            this.socket.on('error', (err) => {
+                this.socket.close();
+                reject(err);
             });
         });
     }

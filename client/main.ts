@@ -33,6 +33,8 @@ async function main() {
 
     const response5 = await proxy.getTask(1);
     console.log(response5);
+
+    proxy.close();
 }
 
 main();

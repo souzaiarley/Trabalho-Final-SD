@@ -134,4 +134,8 @@ export class TaskListProxy {
         // Retorna a mensagem desempacotada
         return message;
     }
+
+    close(): void {
+        this.client.close();
+    }
 }

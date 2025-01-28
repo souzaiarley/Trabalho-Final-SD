@@ -43,4 +43,8 @@ export class UDPClient {
             });
         });
     }
+
+    close() {
+        this.socket.close();
+    }
 }

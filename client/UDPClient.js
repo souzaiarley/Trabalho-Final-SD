@@ -1,18 +1,8 @@
-import * as dgram from 'dgram';
+import dgram from 'dgram';
 
-/*
-client.on('error', (err: Error) => {
-    console.error(`Erro no cliente: ${err.message}`);
-    client.close();
-});
-*/
+export default class UDPClient {
 
-export class UDPClient {
-    socket: dgram.Socket;
-    serverIP: string;
-    serverPort: number;
-
-    constructor(serverIP: string, serverPort: number) {
+    constructor(serverIP, serverPort) {
         try {
             this.socket = dgram.createSocket('udp4');
             this.serverIP = serverIP;
@@ -23,7 +13,7 @@ export class UDPClient {
         }
     }
 
-    sendRequest(request: Buffer) {
+    sendRequest(request) {
         this.socket.send(request, this.serverPort, this.serverIP, (err) => {
             if (err) {
                 console.error('Erro ao enviar mensagem:', err.message);
@@ -32,7 +22,7 @@ export class UDPClient {
         })
     }
 
-    getReply(): Promise<Buffer> {
+    getReply() {
         return new Promise((resolve, reject) => {
             this.socket.on('message', (msg) => {
                 resolve(msg);

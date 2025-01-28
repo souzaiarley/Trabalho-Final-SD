@@ -1,22 +1,21 @@
-import { UDPClient } from './UDPClient'
+import UDPClient from './UDPClient.js';
 
-import { Message } from './classes/Message'
-import { TaskList } from './classes/TaskList'
-import { Task } from './classes/Task'
+import Message from './classes/Message.js';
+import TaskList from './classes/TaskList.js'
 
-export class TaskListProxy {
+export default class TaskListProxy {
     // Contador de requisições
-    requestID: number;
+    requestID;
 
     // Cliente UDP
-    client: UDPClient;
+    client;
 
-    constructor(serverIP: string, serverPort: number) {
+    constructor(serverIP, serverPort) {
         this.requestID = 0;
         this.client = new UDPClient(serverIP, serverPort);
     }
 
-    async getList(): Promise<TaskList> {
+    async getList() {
         // Método sem argumentos
         const args = {};
 
@@ -39,7 +38,7 @@ export class TaskListProxy {
         }
     }
 
-    async createTask(task: Task): Promise<Object> {
+    async createTask(task) {
         // Empacota os argumentos
         const args = task;
         const jsonArgs = JSON.stringify(args);
@@ -60,7 +59,7 @@ export class TaskListProxy {
         }
     }
 
-    async getTask(taskID: number): Promise<Object> {
+    async getTask(taskID) {
         const args = { 'taskID': taskID };
         const jsonArgs = JSON.stringify(args);
         const encodedArgs = Buffer.from(jsonArgs);
@@ -75,7 +74,7 @@ export class TaskListProxy {
         }
     }
 
-    async editTask(taskID: number, newTask: Task) {
+    async editTask(taskID, newTask) {
         const args = { 'taskID': taskID, 'newTask': newTask };
         const jsonArgs = JSON.stringify(args);
         const encodedArgs = Buffer.from(jsonArgs);
@@ -90,7 +89,7 @@ export class TaskListProxy {
         }
     }
 
-    async deleteTask(taskID: number): Promise<Object> {
+    async deleteTask(taskID) {
         const args = { 'taskID': taskID };
         const jsonArgs = JSON.stringify(args);
         const encodedArgs = Buffer.from(jsonArgs);
@@ -105,9 +104,9 @@ export class TaskListProxy {
         }
     }
 
-    async doOperation(objectRef: string, method: string, args: Buffer): Promise<Buffer> {
+    async doOperation(objectRef, method, args) {
         // Empacota a mensagem
-        const request: Buffer = this.packMessage(objectRef, method, args);
+        const request = this.packMessage(objectRef, method, args);
         
         // Envia a mensagem para o servidor
         this.client.sendRequest(request);
@@ -118,7 +117,7 @@ export class TaskListProxy {
             const buffer = await this.client.getReply();
 
             // Desempacota a mensagem da resposta
-            const responseMessage: Message = this.unpackMessage(buffer)
+            const responseMessage = this.unpackMessage(buffer)
 
             // Retorna a resposta com os argumentos empacotados
             return responseMessage.args;
@@ -128,7 +127,7 @@ export class TaskListProxy {
         }
     }
 
-    packMessage(objectRef: string, method: string, args: Buffer): Buffer {
+    packMessage(objectRef, method, args) {
         // Forma a mensagem
         const message = new Message(this.requestID, 'request', objectRef, '', method, args);
         
@@ -140,7 +139,7 @@ export class TaskListProxy {
         return Buffer.from(jsonMessage);
     }
 
-    unpackMessage(reply: Buffer): Message {
+    unpackMessage(reply) {
         // Desempacota a mensagem
         const jsonMessage = reply.toString();
         const obj = JSON.parse(jsonMessage);
@@ -150,7 +149,7 @@ export class TaskListProxy {
         return message;
     }
 
-    close(): void {
+    close() {
         this.client.close();
     }
 }

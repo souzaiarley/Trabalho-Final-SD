@@ -29,6 +29,22 @@ class TaskListServant():
         
         return None
     
+    def editTask(self, args) -> dict:
+        for task in self.taskList.tasks:
+            if task.id == args['taskID']:
+                newTask = args['newTask']
+                
+                task.name = newTask['name']
+                task.description = newTask['description']
+                task.tag = newTask['tag']
+                task.priority = newTask['priority']
+                task.deadline = newTask['deadline']
+                task.completed = newTask['completed']
+
+                return {'edited': True}
+        
+        return {'edited': False}
+
     def deleteTask(self, args) -> dict:
         for task in self.taskList.tasks:
             if task.id == args['taskID']:

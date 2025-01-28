@@ -9,6 +9,8 @@ const task1 = new Task(1, 'task1', 'description1', 'tag1', 1, '2021-01-08', fals
 const task2 = new Task(2, 'task2', 'description2', 'tag2', 2, '2021-01-09', false);
 const task3 = new Task(3, 'task3', 'description3', 'tag3', 3, '2021-01-10', false);
 
+const taskEditada = new Task(3, 'task3 editada', 'description3 editada', 'tag3 editada', 2, '2021-01-10 editado', true);
+
 async function main() {
     const list = await proxy.getList();
     console.log(list.tasks);
@@ -33,6 +35,12 @@ async function main() {
 
     const response5 = await proxy.getTask(1);
     console.log(response5);
+
+    const reponse6 = await proxy.editTask(3, taskEditada);
+    console.log(reponse6);
+
+    const response7 = await proxy.getTask(3);
+    console.log(response7);
 
     proxy.close();
 }

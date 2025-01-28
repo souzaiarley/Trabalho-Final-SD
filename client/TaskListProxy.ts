@@ -61,12 +61,27 @@ export class TaskListProxy {
     }
 
     async getTask(taskID: number): Promise<Object> {
-        const args = {'taskID': taskID};
+        const args = { 'taskID': taskID };
         const jsonArgs = JSON.stringify(args);
         const encodedArgs = Buffer.from(jsonArgs);
 
         try {
             const response = await this.doOperation('TaskList', 'getTask', encodedArgs);
+            const data = JSON.parse(response.toString());
+            return data;
+        }
+        catch (error) {
+            return error;
+        }
+    }
+
+    async editTask(taskID: number, newTask: Task) {
+        const args = { 'taskID': taskID, 'newTask': newTask };
+        const jsonArgs = JSON.stringify(args);
+        const encodedArgs = Buffer.from(jsonArgs);
+
+        try {
+            const response = await this.doOperation('TaskList', 'editTask', encodedArgs);
             const data = JSON.parse(response.toString());
             return data;
         }

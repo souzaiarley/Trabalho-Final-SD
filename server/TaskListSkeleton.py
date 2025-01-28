@@ -35,6 +35,14 @@ class TaskListSkeleton:
         jsonResponse = response.toJson()
         return jsonResponse.encode()
 
+    def editTask(self, args: bytes) -> bytes:
+        args = json.loads(args.decode())
+
+        response = self.taskListServant.editTask(args)
+
+        jsonResponse = json.dumps(response)
+        return jsonResponse.encode()
+
     def deleteTask(self, args: bytes) -> bytes:
         args = json.loads(args.decode())
 

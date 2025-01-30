@@ -23,15 +23,17 @@ class TaskListServant():
         return task
     
     def getTask(self, args) -> Task:
+        task_id = int(args['taskID'])
         for task in self.taskList.tasks:
-            if task.id == args['taskID']:
+            if task.id == task_id:
                 return task
         
         return None
     
     def editTask(self, args) -> dict:
+        task_id = int(args['taskID'])
         for task in self.taskList.tasks:
-            if task.id == args['taskID']:
+            if task.id == task_id:
                 newTask = args['newTask']
                 
                 task.name = newTask['name']
@@ -46,8 +48,9 @@ class TaskListServant():
         return {'edited': False}
 
     def deleteTask(self, args) -> dict:
+        task_id = int(args['taskID'])
         for task in self.taskList.tasks:
-            if task.id == args['taskID']:
+            if task.id == task_id:
                 self.taskList.tasks.remove(task)
                 return {'deleted': True}
         

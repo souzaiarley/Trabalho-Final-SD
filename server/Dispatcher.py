@@ -10,21 +10,17 @@ class Dispatcher:
         method = None
         response = None
 
-        try:
-            module = importlib.import_module(f'{message.objectRef}Skeleton')
+        # try:
+        module = importlib.import_module(f'{message.objectRef}Skeleton')
 
-            objectRef = getattr(module, f'{message.objectRef}Skeleton')
+        objectRef = getattr(module, f'{message.objectRef}Skeleton')
 
-            if objectRef not in self.skeletons:
-                self.skeletons[objectRef] = objectRef()
+        if objectRef not in self.skeletons:
+            self.skeletons[objectRef] = objectRef()
 
-            objectRef = self.skeletons[objectRef]
+        objectRef = self.skeletons[objectRef]
 
-            method = getattr(objectRef, message.methodID)
-            response = method(message.args)
+        method = getattr(objectRef, message.methodID)
+        response = method(message.args)
 
-            return response
-
-        except Exception as e:
-            print(e)
-            return 'Error'
+        return response

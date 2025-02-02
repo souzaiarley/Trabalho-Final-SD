@@ -9,6 +9,5 @@ class Task:
         self.priority: int = priority
         self.deadline: str = deadline
         self.completed: bool = completed
-
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)

@@ -51,12 +51,8 @@ async function createTask(taskList) {
 
 async function getTask() {
     const id = await askQuestion('\nId da task: ')
-    try {
-        const res = await proxy.getTask(id);
-        return res
-    }catch(e){
-        return e;
-    }
+    const res = await proxy.getTask(id);
+    return res
 }
 
 async function updateTask(taskList) {
@@ -113,7 +109,7 @@ async function main() {
         console.log('\nSelecione uma opcao:\n');
         console.log('[1] Adicionar tarefa');
         console.log('[2] Buscar tarefa');
-        console.log('[3] Atualizar tarefa'); // Não implementada...
+        console.log('[3] Atualizar tarefa');
         console.log('[4] Deletar tarefa');
         console.log('[5] Encerrar...')
         const option = await askQuestion('Escolha uma opção: ');
@@ -123,16 +119,15 @@ async function main() {
                 console.clear();
                 console.log(chalk.bold('\nAdicionando tarefa...'));
                 
-                const reponse = await createTask(tasklist);
-                const newTask = new Task(reponse.id, reponse.name, reponse.description, reponse.tag, reponse.priority, reponse.deadline, reponse.completed);
-                tasklist.tasks.push(newTask);
-                
+                const response = await createTask(tasklist);
+                if(response.error) throw new Error(response.message);
+
+                tasklist = await proxy.getList();
                 console.log(chalk.green('\nTarefa adicionada com sucesso!'));
                 await askQuestion('Pressione Enter para continuar...');
             }
             catch (error) {
-                console.log(chalk.red('\nErro ao adicionar tarefa!'));
-                console.log(chalk.red(error.message));
+                console.log(chalk.red(`\nErro ao adicionar tarefa: ${error.message}`));
                 await askQuestion('Pressione Enter para continuar...');
             }
         }else if (option === '2'){
@@ -140,60 +135,48 @@ async function main() {
                 console.clear();
                 console.log(chalk.bold('\nBuscando tarefa...'));
                 const task = await getTask()
+                if(task.error) throw new Error(task.message)
 
-                if(!(task instanceof Error)){ // Isso tá retornando um erro quando vc pede algo q nao existe mas nao ta indo para o catch
-                    const table = new Table({
-                        head: [
-                            chalk.blue('#'),
-                            chalk.blue('Título'),
-                            chalk.blue('Descrição'),
-                            chalk.blue('Tag'),
-                            chalk.blue('Prioridade'),
-                            chalk.blue('Prazo'),
-                            chalk.blue('Feita?')
-                        ],
-                        colWidths: [3, 25, 50, 15, 12, 15, 10],
-                    });
-                    table.push([
-                        task.id,
-                        task.name,
-                        task.description,
-                        task.tag,
-                        task.priority,
-                        task.deadline,
-                        task.completed ? chalk.white.bold('✅ Sim') : chalk.gray('❌ Não'),
-                    ]);
-                    console.log(chalk.green('\nTarefa encontrada com sucesso!'));
-                    console.log(table.toString())
-                    await askQuestion('Pressione Enter para continuar...');
-                } else {
-                    console.log(chalk.red('\nErro ao buscar tarefa: tarefa nao existe.'));
-                    await askQuestion('Pressione Enter para continuar...');
-                }
+                console.log(chalk.green('\nTarefa encontrada com sucesso!'));
+                const table = new Table({
+                    head: [
+                        chalk.blue('#'),
+                        chalk.blue('Título'),
+                        chalk.blue('Descrição'),
+                        chalk.blue('Tag'),
+                        chalk.blue('Prioridade'),
+                        chalk.blue('Prazo'),
+                        chalk.blue('Feita?')
+                    ],
+                    colWidths: [3, 25, 50, 15, 12, 15, 10],
+                });
+                table.push([
+                    task.id,
+                    task.name,
+                    task.description,
+                    task.tag,
+                    task.priority,
+                    task.deadline,
+                    task.completed ? chalk.white.bold('✅ Sim') : chalk.gray('❌ Não'),
+                ]);
+                console.log(table.toString())
+                await askQuestion('Pressione Enter para continuar...');
             }catch(e){
-                console.log(chalk.red('\nErro ao buscar tarefa!')); // Tarefa nao existe no B-E.
-                console.log(chalk.red(e.message));
+                console.log(chalk.red(`\nErro ao buscar tarefa: ${e.message}`)); // Tarefa nao existe no B-E.
                 await askQuestion('Pressione Enter para continuar...');
             }
         }else if(option === '3'){
             try {
                 console.clear();
                 console.log(chalk.bold('\nAtualizando tarefa...'));
-                
                 const res = await updateTask(tasklist);
-                if(res.edited){
-                    tasklist = await proxy.getList();
-                    console.log(chalk.green('\nTarefa atualizada com sucesso!'));
-                }else{
-                    console.log(chalk.red('\nErro ao atualizar tarefa: tarefa nao existe.'));
-                } 
-                
-                // console.log(chalk.green('\nTarefa adicionada com sucesso!'));
+                if(res.error) throw new Error(res.message)
+                tasklist = await proxy.getList();
+                console.log(chalk.green('\nTarefa atualizada com sucesso!'));
                 await askQuestion('Pressione Enter para continuar...');
             }
             catch (error) {
-                console.log(chalk.red('\nErro ao adicionar tarefa!'));
-                console.log(chalk.red(error.message));
+                console.log(chalk.red(`\nErro ao atualizar tarefa: ${error.message}`));
                 await askQuestion('Pressione Enter para continuar...');
             }
 
@@ -202,20 +185,17 @@ async function main() {
                 console.clear();
                 console.log(chalk.bold('\nApagando tarefa...'));
                 const res = await deleteTask()
-                if(res.deleted) {
-                    tasklist = await proxy.getList();
-                    console.log(chalk.green('\nTarefa deletada com sucesso!'));
-                }else {
-                    console.log(chalk.red('\nErro ao deletar tarefa: tarefa nao existe.'));
-                }
+                if(res.error) throw new Error(res.message)
+                tasklist = await proxy.getList();
+                console.log(chalk.green('\nTarefa deletada com sucesso!'));
                 await askQuestion('Pressione Enter para continuar...');
             }catch(e){
-                console.log(chalk.red('\nErro ao deletar tarefa!')); // Tarefa nao existe no B-E?
-                console.log(chalk.red(e));
+                console.log(chalk.red(`\nErro ao deletar tarefa: ${e.message}`)); // Tarefa nao existe no B-E
                 await askQuestion('Pressione Enter para continuar...');
             }
         }else if(option === '5'){
             proxy.close();
+            console.log(`Encerrando conexão... ✌`)
             break;
         }
     }

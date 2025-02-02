@@ -6,47 +6,60 @@ class TaskListSkeleton:
         self.taskListServant = TaskListServant()
 
     def getList(self, args: bytes) -> bytes:
-        # Desempacota os argumentos de entrada
-        args = json.loads(args.decode())
+        try:
+            # Desempacota os argumentos de entrada
+            args = json.loads(args.decode())
 
-        # Chama o metodo do servente e obtem a resposta
-        response = self.taskListServant.getList(args)
+            # Chama o metodo do servente e obtem a resposta
+            response = self.taskListServant.getList(args)
 
-        # Empacota a resposta e a retorna
-        jsonResponse = response.toJson()
-        return jsonResponse.encode()
+            # Empacota a resposta e a retorna
+            jsonResponse = response.toJson()
+            return jsonResponse.encode()
+        except Exception as e:
+            return self.__createError(str(e))
 
     def createTask(self, args: bytes) -> bytes:
-        # Desempacota os argumentos de entrada
-        args = json.loads(args.decode())
+        try:
+            # Desempacota os argumentos de entrada
+            args = json.loads(args.decode())
 
-        # Chama o metodo do servente e obtem a resposta
-        response = self.taskListServant.createTask(args)
+            # Chama o metodo do servente e obtem a resposta
+            response = self.taskListServant.createTask(args)
 
-        # Empacota a resposta e a retorna
-        jsonResponse = response.toJson()
-        return jsonResponse.encode()
+            # Empacota a resposta e a retorna
+            jsonResponse = response.toJson()
+            return jsonResponse.encode()
+        except Exception as e:
+            return self.__createError(e)
 
     def getTask(self, args: bytes) -> bytes:
-        args = json.loads(args.decode())
-
-        response = self.taskListServant.getTask(args)
-
-        jsonResponse = response.toJson()
-        return jsonResponse.encode()
-
+        try:
+            args = json.loads(args.decode())
+            response = self.taskListServant.getTask(args)
+            jsonResponse = response.toJson()
+            return jsonResponse.encode()
+        except Exception as e:
+            return self.__createError(e)
+        
+    
     def editTask(self, args: bytes) -> bytes:
-        args = json.loads(args.decode())
-
-        response = self.taskListServant.editTask(args)
-
-        jsonResponse = json.dumps(response)
-        return jsonResponse.encode()
+        try:
+            args = json.loads(args.decode())
+            response = self.taskListServant.editTask(args)
+            jsonResponse = json.dumps(response)
+            return jsonResponse.encode()
+        except Exception as e:
+            return self.__createError(e)
 
     def deleteTask(self, args: bytes) -> bytes:
-        args = json.loads(args.decode())
-
-        response = self.taskListServant.deleteTask(args)
-
-        jsonResponse = json.dumps(response)
-        return jsonResponse.encode()
+        try:
+            args = json.loads(args.decode())
+            response = self.taskListServant.deleteTask(args)
+            jsonResponse = json.dumps(response)
+            return jsonResponse.encode()
+        except Exception as e:
+            return self.__createError(e)
+    
+    def __createError(self,message):
+        return json.dumps({"error": "true", "message": str(message)})

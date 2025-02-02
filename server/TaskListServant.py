@@ -9,18 +9,21 @@ class TaskListServant():
         return self.taskList
     
     def createTask(self, args) -> Task:
-        task = Task(
-            args['id'],
-            args['name'],
-            args['description'],
-            args['tag'],
-            args['priority'],
-            args['deadline'],
-            args['completed']
-        )
+        try:
+            task = Task(
+                args['id'],
+                args['name'],
+                args['description'],
+                args['tag'],
+                args['priority'],
+                args['deadline'],
+                args['completed']
+            )
 
-        self.taskList.tasks.append(task)
-        return task
+            self.taskList.tasks.append(task)
+            return task
+        except Exception as e:
+            raise Exception(f"Error while creating a new task. Please try again.")
     
     def getTask(self, args) -> Task:
         task_id = int(args['taskID'])
@@ -28,7 +31,7 @@ class TaskListServant():
             if task.id == task_id:
                 return task
         
-        return None
+        raise Exception(f"Task with ID {args['taskID']} not found.")
     
     def editTask(self, args) -> dict:
         task_id = int(args['taskID'])
@@ -45,7 +48,7 @@ class TaskListServant():
 
                 return {'edited': True}
         
-        return {'edited': False}
+        raise Exception(f"Task with ID {args['taskID']} not exist to update.")
 
     def deleteTask(self, args) -> dict:
         task_id = int(args['taskID'])
@@ -54,4 +57,4 @@ class TaskListServant():
                 self.taskList.tasks.remove(task)
                 return {'deleted': True}
         
-        return {'deleted': False}
+        raise Exception(f"Task with ID {args['taskID']} not exist to delete.")

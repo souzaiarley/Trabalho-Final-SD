@@ -63,15 +63,9 @@ export default class TaskListProxy {
         const args = { 'taskID': taskID };
         const jsonArgs = JSON.stringify(args);
         const encodedArgs = Buffer.from(jsonArgs);
-
-        try {
-            const response = await this.doOperation('TaskList', 'getTask', encodedArgs);
-            const data = JSON.parse(response.toString());
-            return data;
-        }
-        catch (error) {
-            return error;
-        }
+        const response = await this.doOperation('TaskList', 'getTask', encodedArgs);
+        const data = JSON.parse(response.toString());
+        return data;
     }
 
     async editTask(taskID, newTask) {

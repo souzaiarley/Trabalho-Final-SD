@@ -14,5 +14,5 @@ class Message:
 
     def _json_default(self, obj):
         if isinstance(obj, bytes):
-            return obj.decode('utf-8')  # or use another encoding if needed
+            return obj.decode('utf-8')
         return obj.__dict__

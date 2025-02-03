@@ -65,6 +65,22 @@ async function updateTask(taskList) {
     const tag = await askQuestion('Tag: ');
     const priority = await askQuestion('Prioridade: ');
     const deadline = await askQuestion('Prazo: ');
+    const completed = await askQuestion('Feita? (s/n): ');
+
+    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, completed === 's' ? true : false);
+    
+    try {
+        const response = await proxy.editTask(id,newTask);
+        return response;
+    }
+    catch (error) {
+        return error;
+    }
+}
+
+async function editTaskStatus() {
+    const id = await askQuestion('\nId da task: ');
+    const task = await proxy.getTask(id);
 
     const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, false);
     

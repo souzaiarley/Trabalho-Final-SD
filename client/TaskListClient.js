@@ -38,8 +38,11 @@ async function createTask(taskList) {
     const priority = await askQuestion('Prioridade: ');
     const deadline = await askQuestion('Prazo: ');
 
-    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, false);
+    const lastTask = taskList.tasks.length > 0 ? taskList.tasks[taskList.tasks.length - 1] : null;
+    const newId = lastTask ? lastTask.id + 1 : 1; // ID atribuído condicionalmente
     
+    const newTask = new Task(newId, title, description, tag, priority, deadline, false);
+        
     try {
         const response = await proxy.createTask(newTask);
         return response;

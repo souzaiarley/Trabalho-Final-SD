@@ -82,10 +82,14 @@ async function editTaskStatus() {
     const id = await askQuestion('\nId da task: ');
     const task = await proxy.getTask(id);
 
-    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, false);
-    
+    console.log('Selecione uma opcao:\n');
+
+    const option = await askQuestion('Feita?: ');
+    const completed = option === 's' ? true : false;
+    const newTask = new Task(task.id, task.name, task.description, task.tag, task.priority, task.deadline, completed);
+
     try {
-        const response = await proxy.editTask(id,newTask);
+        const response = await proxy.editTask(id, newTask);
         return response;
     }
     catch (error) {

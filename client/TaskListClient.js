@@ -65,11 +65,31 @@ async function updateTask(taskList) {
     const tag = await askQuestion('Tag: ');
     const priority = await askQuestion('Prioridade: ');
     const deadline = await askQuestion('Prazo: ');
+    const completed = await askQuestion('Feita? (s/n): ');
 
-    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, false);
+    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, completed === 's' ? true : false);
     
     try {
         const response = await proxy.editTask(id,newTask);
+        return response;
+    }
+    catch (error) {
+        return error;
+    }
+}
+
+async function editTaskStatus() {
+    const id = await askQuestion('\nId da task: ');
+    const task = await proxy.getTask(id);
+
+    console.log('Selecione uma opcao:\n');
+
+    const option = await askQuestion('Feita?: ');
+    const completed = option === 's' ? true : false;
+    const newTask = new Task(task.id, task.name, task.description, task.tag, task.priority, task.deadline, completed);
+
+    try {
+        const response = await proxy.editTask(id, newTask);
         return response;
     }
     catch (error) {
@@ -169,18 +189,41 @@ async function main() {
                 await askQuestion('Pressione Enter para continuar...');
             }
         }else if(option === '3'){
-            try {
-                console.clear();
-                console.log(chalk.bold('\nAtualizando tarefa...'));
-                const res = await updateTask(tasklist);
-                if(res.error) throw new Error(res.message)
-                tasklist = await proxy.getList();
-                console.log(chalk.green('\nTarefa atualizada com sucesso!'));
-                await askQuestion('Pressione Enter para continuar...');
-            }
-            catch (error) {
-                console.log(chalk.red(`\nErro ao atualizar tarefa: ${error.message}`));
-                await askQuestion('Pressione Enter para continuar...');
+            console.clear();
+            console.log("Selecione uma opção:\n");
+            console.log("[1] Editar somente o status da tarefa");
+            console.log("[2] Editar tarefa");
+
+            const option = await askQuestion('Escolha uma opção: ');
+
+            if(option === '1'){
+                try {
+                    console.clear();
+                    console.log(chalk.bold('\nAtualizando status da tarefa...'));
+                    const res = await editTaskStatus(tasklist);
+                    if(res.error) throw new Error(res.message)
+                    tasklist = await proxy.getList();
+                    console.log(chalk.green('\nStatus da tarefa atualizado com sucesso!'));
+                    await askQuestion('Pressione Enter para continuar...');
+                }
+                catch (error) {
+                    console.log(chalk.red(`\nErro ao atualizar status da tarefa: ${error.message}`));
+                    await askQuestion('Pressione Enter para continuar...');
+                }
+            }else if(option === '2'){
+                try {
+                    console.clear();
+                    console.log(chalk.bold('\nAtualizando tarefa...'));
+                    const res = await updateTask(tasklist);
+                    if(res.error) throw new Error(res.message)
+                    tasklist = await proxy.getList();
+                    console.log(chalk.green('\nTarefa atualizada com sucesso!'));
+                    await askQuestion('Pressione Enter para continuar...');
+                }
+                catch (error) {
+                    console.log(chalk.red(`\nErro ao atualizar tarefa: ${error.message}`));
+                    await askQuestion('Pressione Enter para continuar...');
+                }
             }
 
         }else if(option === '4'){

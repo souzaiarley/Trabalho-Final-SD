@@ -65,9 +65,20 @@ async function updateTask(taskList) {
     const tag = await askQuestion('Tag: ');
     const priority = await askQuestion('Prioridade: ');
     const deadline = await askQuestion('Prazo: ');
-    const completed = await askQuestion('Feita? (y/n): ');
+    const completedOption = await askQuestion('Feita? (y/n): ');
 
-    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, completed === 's' ? true : false);
+    let completed;
+    if (completedOption === 'y' || completedOption === 'n') {
+        if (completedOption === 'y') {
+            completed = true;
+        } else if (completedOption === 'n') {
+            completed = false;
+        }
+    } else {
+        throw new Error('Opção inválida');
+    }
+
+    const newTask = new Task(taskList.tasks.length + 1, title, description, tag, priority, deadline, completed);
     
     try {
         const response = await proxy.editTask(id,newTask);
@@ -84,9 +95,21 @@ async function editTaskStatus() {
 
     console.log('Selecione uma opcao:\n');
 
-    const option = await askQuestion('Feita? (y/n) ');
-    const completed = option === 'y' ? true : false;
+    const completedOption = await askQuestion('Feita? (y/n): ');
+
+    let completed;
+    if (completedOption === 'y' || completedOption === 'n') {
+        if (completedOption === 'y') {
+            completed = true;
+        } else if (completedOption === 'n') {
+            completed = false;
+        }
+    } else {
+        throw new Error('Opção inválida');
+    }
+
     const newTask = new Task(task.id, task.name, task.description, task.tag, task.priority, task.deadline, completed);
+
 
     try {
         const response = await proxy.editTask(id, newTask);

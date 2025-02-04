@@ -7,9 +7,16 @@ class TaskListServant():
     
     def getList(self, args) -> TaskList:
         return self.taskList
-    
+
     def createTask(self, args) -> Task:
         try:
+            # Verifica se a tarefa já existe
+            task_id = args['id']
+            for task in self.taskList.tasks:
+                if task.id == task_id:
+                    raise Exception(f"Task with ID {task_id} already exists.")
+
+            # Cria a nova tarefa
             task = Task(
                 args['id'],
                 args['name'],
@@ -23,7 +30,7 @@ class TaskListServant():
             self.taskList.tasks.append(task)
             return task
         except Exception as e:
-            raise Exception(f"Error while creating a new task. Please try again.")
+            raise Exception(f"Error while creating a new task. Please try again. {e}")
     
     def getTask(self, args) -> Task:
         task_id = int(args['taskID'])

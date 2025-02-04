@@ -74,8 +74,11 @@ class ProcessRequests:
                 response = self.dispatcher.selectSkeleton(message)
                 # Empacota a resposta
                 reply = self.packMessage(response, message.id)
-                # Envia a resposta
-                self.server.sendReply(reply, clientAddr)
+                # Armazena a resposta no histórico para futuras duplicações
+                self.responseHistory[message.id] = reply
+
+            # Envia a resposta
+            self.server.sendReply(reply, clientAddr)
 
 
 if __name__ == '__main__':

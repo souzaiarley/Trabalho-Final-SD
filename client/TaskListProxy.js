@@ -103,7 +103,7 @@ export default class TaskListProxy {
         const request = this.packMessage(objectRef, method, args);
         
         // Envia a mensagem para o servidor
-        this.client.sendRequest(request, this.requestID);
+        this.client.sendRequest(request);
         
         // Recebimento
         try {

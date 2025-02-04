@@ -59,25 +59,25 @@ class ProcessRequests:
 
     def run(self):
         while True:
-            # Recebe a requisição
             request, clientAddr = self.server.getRequest()
-            # Desempacota a mensagem
             message = self.unpackMessage(request)
 
-            # Verifica se a mensagem recebida é duplicada
-            if message.id in self.responseHistory:
-                # Reenvia a resposta armazenada
-                print(f'Mensagem duplicada: {message.id}, reenviando resposta armazenada.')
-                reply = self.responseHistory[message.id]
+            # Apenas operações não idempotentes
+            if message.methodID in ["createTask", "editTask", "deleteTask"]:
+                # Verifica se a mensagem já foi processada
+                if message.id in self.responseHistory:
+                    print(f"Requisição duplicada (ID: {message.id}). Retornando resposta armazenada.")
+                    reply = self.responseHistory[message.id]
+                else:
+                    # Processa a requisição normalmente e armazena a resposta
+                    response = self.dispatcher.selectSkeleton(message)
+                    reply = self.packMessage(response, message.id)
+                    self.responseHistory[message.id] = reply
             else:
-                # Chama o despachante e recebe a resposta da requisição
+                # Processa normalmente operações idempotentes (getList, getTask)
                 response = self.dispatcher.selectSkeleton(message)
-                # Empacota a resposta
                 reply = self.packMessage(response, message.id)
-                # Armazena a resposta no histórico para futuras duplicações
-                self.responseHistory[message.id] = reply
 
-            # Envia a resposta
             self.server.sendReply(reply, clientAddr)
 
 

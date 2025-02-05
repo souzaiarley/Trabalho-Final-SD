@@ -9,15 +9,15 @@ class UDPServer:
         self.serverSocket = socket(AF_INET, SOCK_DGRAM)
         self.serverSocket.bind(('', self.serverPort))
         print(f'Server running on port {self.serverPort}')
-    
+
     def getRequest(self):
         request, clientAddr = self.serverSocket.recvfrom(1024)
         return request, clientAddr
-    
+
     def sendReply(self, reply, clientAddr):
         self.serverSocket.sendto(reply, clientAddr)
 
-    def close(self):    
+    def close(self):
         self.serverSocket.close()
 
 
@@ -25,7 +25,9 @@ class ProcessRequests:
     def __init__(self):
         self.server = UDPServer()
         self.dispatcher = Dispatcher()
-    
+        self.responseHistory = {}
+        self.requestCounter = 0
+
     def unpackMessage(self, request: bytes) -> Message:
         request = json.loads(request.decode())
 
@@ -41,7 +43,7 @@ class ProcessRequests:
         )
 
         return message
-    
+
     def packMessage(self, response: bytes, requestID: int) -> bytes:
         message = Message(
             requestID,
@@ -58,21 +60,33 @@ class ProcessRequests:
 
     def run(self):
         while True:
-            # Recebe a requisição
             request, clientAddr = self.server.getRequest()
-
-            # Desempacota a mensagem
             message = self.unpackMessage(request)
-            
-            # Chama o despachante e recebe a resposta da requisição
-            response = self.dispatcher.selectSkeleton(message)
-            
-            # Empacota a resposta
-            reply = self.packMessage(response, message.id)
-            
-            # Envia a resposta
-            self.server.sendReply(reply, clientAddr)
 
+            # Apenas operações não idempotentes
+            if message.methodID in ["createTask", "editTask", "deleteTask"]:
+                # Verifica se a mensagem já foi processada
+                if message.id in self.responseHistory:
+                    print(f"Requisição duplicada (ID: {message.id}). Retornando resposta armazenada.")
+                    reply = self.responseHistory[message.id]
+                else:
+                    # Processa a requisição normalmente e armazena a resposta
+                    response = self.dispatcher.selectSkeleton(message)
+                    reply = self.packMessage(response, message.id)
+                    self.responseHistory[message.id] = reply
+            else:
+                # Processa normalmente operações idempotentes (getList, getTask)
+                response = self.dispatcher.selectSkeleton(message)
+                reply = self.packMessage(response, message.id)
+                self.server.sendReply(reply, clientAddr)
+
+            if self.requestCounter % 3 == 0 and self.requestCounter != 0:
+                print(f"Simulating packet loss for request {self.requestCounter + 1}")
+            else:
+                self.server.sendReply(reply, clientAddr)
+
+            self.requestCounter += 1
+            # print("Request ", self.requestCounter, ", method: ", message.methodID)
 
 if __name__ == '__main__':
     pr = ProcessRequests()

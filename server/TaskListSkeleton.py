@@ -24,6 +24,10 @@ class TaskListSkeleton:
             # Desempacota os argumentos de entrada
             args = json.loads(args.decode())
 
+            # Verifica se o ID está presente nos argumentos
+            if 'id' not in args:
+                raise Exception("O campo 'id' é obrigatório para criar uma tarefa.")
+
             # Chama o metodo do servente e obtem a resposta
             response = self.taskListServant.createTask(args)
 

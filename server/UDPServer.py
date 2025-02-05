@@ -9,15 +9,15 @@ class UDPServer:
         self.serverSocket = socket(AF_INET, SOCK_DGRAM)
         self.serverSocket.bind(('', self.serverPort))
         print(f'Server running on port {self.serverPort}')
-    
+
     def getRequest(self):
         request, clientAddr = self.serverSocket.recvfrom(1024)
         return request, clientAddr
-    
+
     def sendReply(self, reply, clientAddr):
         self.serverSocket.sendto(reply, clientAddr)
 
-    def close(self):    
+    def close(self):
         self.serverSocket.close()
 
 
@@ -26,7 +26,7 @@ class ProcessRequests:
         self.server = UDPServer()
         self.dispatcher = Dispatcher()
         self.responseHistory = {}
-    
+
     def unpackMessage(self, request: bytes) -> Message:
         request = json.loads(request.decode())
 
@@ -42,7 +42,7 @@ class ProcessRequests:
         )
 
         return message
-    
+
     def packMessage(self, response: bytes, requestID: int) -> bytes:
         message = Message(
             requestID,

@@ -2,11 +2,13 @@ import dgram from 'dgram';
 
 export default class UDPClient {
 
-    constructor(serverIP, serverPort) {
+    constructor(serverIP, serverPort, timeout = 2000, maxRetries = 3) {
         try {
             this.socket = dgram.createSocket('udp4');
             this.serverIP = serverIP;
             this.serverPort = serverPort;
+            this.timeout = timeout;
+            this.maxRetries = maxRetries;
         }
         catch (err) {
             console.error(`Erro ao criar socket: ${err.message}`);
@@ -23,14 +25,34 @@ export default class UDPClient {
     }
 
     getReply() {
+        let attempt = 1;
+        let received = false;
+
         return new Promise((resolve, reject) => {
-            this.socket.on('message', (msg) => {
-                resolve(msg);
-            });
-            this.socket.on('error', (err) => {
-                this.socket.close();
-                reject(err);
-            });
+            const waitReply = () => {
+                if (attempt > this.maxRetries) {
+                    reject(new Error("Máximo de tentativas atingido. Servidor não respondeu."));
+                    return;
+                }
+
+                console.log(`Tentativa ${attempt}...`);
+                attempt++;
+
+                const timeoutHandler = setTimeout(() => {
+                    console.log("Timeout expirado, reenviando requisição...");
+                    // Reenvia a última requisição
+                    this.sendRequest(this.lastRequest); 
+                    waitReply();
+                }, this.timeout);
+
+                this.socket.once('message', (msg) => {
+                    received = true;
+                    clearTimeout(timeoutHandler);
+                    resolve(msg);
+                });
+            };
+
+            waitReply();
         });
     }
 

@@ -4,7 +4,7 @@ import Message from './classes/Message.js';
 import TaskList from './classes/TaskList.js'
 
 export default class TaskListProxy {
-    // Contador de requisições
+    // Identificador de requisição
     requestID;
 
     // Cliente UDP
@@ -122,11 +122,11 @@ export default class TaskListProxy {
     }
 
     packMessage(objectRef, method, args) {
+        // Gera um identificador único (timestamp + contador)
+        this.requestID = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
         // Forma a mensagem
         const message = new Message(this.requestID, 'request', objectRef, '', method, args);
-        
-        // Incrementa o ID da requisição
-        this.requestID++;
         
         // Empacota a mensagem
         const jsonMessage = JSON.stringify(message);

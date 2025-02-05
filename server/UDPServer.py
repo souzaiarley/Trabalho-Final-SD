@@ -26,6 +26,7 @@ class ProcessRequests:
         self.server = UDPServer()
         self.dispatcher = Dispatcher()
         self.responseHistory = {}
+        self.requestCounter = 0
 
     def unpackMessage(self, request: bytes) -> Message:
         request = json.loads(request.decode())
@@ -77,9 +78,15 @@ class ProcessRequests:
                 # Processa normalmente operações idempotentes (getList, getTask)
                 response = self.dispatcher.selectSkeleton(message)
                 reply = self.packMessage(response, message.id)
+                self.server.sendReply(reply, clientAddr)
 
-            self.server.sendReply(reply, clientAddr)
+            if self.requestCounter % 3 == 0 and self.requestCounter != 0:
+                print(f"Simulating packet loss for request {self.requestCounter + 1}")
+            else:
+                self.server.sendReply(reply, clientAddr)
 
+            self.requestCounter += 1
+            # print("Request ", self.requestCounter, ", method: ", message.methodID)
 
 if __name__ == '__main__':
     pr = ProcessRequests()

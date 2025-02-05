@@ -2,7 +2,7 @@ import dgram from 'dgram';
 
 export default class UDPClient {
 
-    constructor(serverIP, serverPort, timeout = 5000, maxRetries = 3) {
+    constructor(serverIP, serverPort, timeout = 1000, maxRetries = 3) {
         try {
             this.socket = dgram.createSocket('udp4');
             this.serverIP = serverIP;
@@ -46,7 +46,7 @@ export default class UDPClient {
                     waitReply();
                 }, this.timeout);
 
-                this.socket.once('message', (msg) => {
+                this.socket.on('message', (msg) => {
                     received = true;
                     clearTimeout(timeoutHandler);
                     resolve(msg);

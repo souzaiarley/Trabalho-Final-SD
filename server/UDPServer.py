@@ -73,6 +73,7 @@ class ProcessRequests:
                     # Processa a requisição normalmente e armazena a resposta
                     response = self.dispatcher.selectSkeleton(message)
                     reply = self.packMessage(response, message.id)
+                    self.responseHistory.clear()
                     self.responseHistory[message.id] = reply
             else:
                 # Processa normalmente operações idempotentes (getList, getTask)
